@@ -1,13 +1,14 @@
 import * as React from 'react'
-import { ApolloProvider } from 'react-apollo'
 import { Provider } from 'mobx-react'
 import { Router } from 'pathricia'
 import createHistory from 'history/createBrowserHistory'
-import client from './helpers/graphqlClient'
 import App from './views/App'
 import 'normalize.css'
 import { injectGlobal } from 'styled-components'
 import { typography } from './style/typography'
+import { createStore } from 'mobx-app'
+import Game from './game/Game'
+import loop from './game/loop'
 
 injectGlobal`
   body {
@@ -19,14 +20,20 @@ injectGlobal`
   ${typography}
 `
 
+const stores = {
+  Game,
+}
+
+const { state, actions } = createStore(stores)
 const router = Router('/', createHistory())
 
 const AppContainer = () => (
-  <ApolloProvider client={client}>
-    <Provider router={router}>
-      <App />
-    </Provider>
-  </ApolloProvider>
+  <Provider state={state} actions={actions} router={router}>
+    <App />
+  </Provider>
 )
+
+// Start the game loop
+loop(state)
 
 export default AppContainer

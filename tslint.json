@@ -28,6 +28,7 @@
     "no-duplicate-variable": true,
     "no-eval": true,
     "curly": true,
+    "only-arrow-functions": false,
     "no-unused-expression": false,
     "jsx-no-lambda": false,
     "jsx-no-multiline-js": false,

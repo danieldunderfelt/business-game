@@ -9,5 +9,4 @@ configure({
 })
 
 const mountNode = document.getElementById('app')
-
 render(<AppContainer />, mountNode)
