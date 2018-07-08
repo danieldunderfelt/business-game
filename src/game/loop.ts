@@ -1,24 +1,34 @@
-import { autorun } from 'mobx'
+import { autorun, toJS } from 'mobx'
 import timer from '../helpers/timer'
 import gameStateActions from './gameStateActions'
+import eventLoop from './eventLoop'
 
-export default game => {
+export default gameStore => {
   let timerHandle = null
-  const actions = gameStateActions(game)
+  let eventsRunning = false
+  const actions = gameStateActions(gameStore)
 
   autorun(() => {
-    if (game.isRunning && !timerHandle) {
+    if (gameStore.isRunning && !timerHandle) {
       timerHandle = timer(tick, 1000)
     }
 
-    if (!game.isRunning && timerHandle) {
+    if (!gameStore.isRunning && timerHandle) {
       cancelAnimationFrame(timerHandle.value)
       timerHandle = null
     }
   })
 
-  function tick() {
+  async function tick() {
     actions.passTime()
+
+    if (!eventsRunning) {
+      console.log('Starting new event loop.')
+
+      eventsRunning = true
+      await eventLoop(gameStore)
+      eventsRunning = false
+    }
   }
 
   return {}

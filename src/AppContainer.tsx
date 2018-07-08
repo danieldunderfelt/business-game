@@ -7,7 +7,7 @@ import 'normalize.css'
 import { injectGlobal } from 'styled-components'
 import { typography } from './style/typography'
 import { createStore } from 'mobx-app'
-import Game from './game/Game'
+import GameStore from './stores/GameStore'
 import loop from './game/loop'
 
 injectGlobal`
@@ -20,11 +20,12 @@ injectGlobal`
   ${typography}
 `
 
-const stores = {
-  Game,
-}
+// Create state and actions from store factories
+const { state, actions } = createStore({
+  Game: GameStore,
+})
 
-const { state, actions } = createStore(stores)
+// Create pathricia router
 const router = Router('/', createHistory())
 
 const AppContainer = () => (

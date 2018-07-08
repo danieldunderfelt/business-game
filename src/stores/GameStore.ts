@@ -1,8 +1,8 @@
 import { extendObservable, observable } from 'mobx'
 import { DateTime } from 'luxon'
-import gameStateActions from './gameStateActions'
+import gameStateActions from '../game/gameStateActions'
 
-const Game = state => {
+const GameStore = state => {
   const gameState = extendObservable(
     state,
     {
@@ -38,4 +38,4 @@ const Game = state => {
   }
 }
 
-export default Game
+export default GameStore
