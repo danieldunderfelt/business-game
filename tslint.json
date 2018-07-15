@@ -34,6 +34,7 @@
     "jsx-no-multiline-js": false,
     "jsx-boolean-value": false,
     "no-shadowed-variable": true,
+    "prefer-conditional-expression": false,
     "prettier": true
   }
 }

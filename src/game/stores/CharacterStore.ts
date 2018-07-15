@@ -1,49 +1,46 @@
 import * as faker from 'faker'
-import Character from '../objects/Character'
+import { CharacterData, Gender } from '../../shared/types/Character'
 import { GameLoopCallable } from '../types/GameLoopCallable'
-import { CharacterData, CharacterObject, Gender } from '../../shared/types/Character'
+import { get } from 'lodash'
+import runCharacterActions from '../actions/runCharacterActions'
 
 const genders: Gender[] = [Gender.female, Gender.male]
 
 function createCharacter(): CharacterData {
   const gender: number = faker.random.number(1)
 
-  const character = Character({
+  const character = {
     id: faker.random.uuid(),
     name: faker.name.findName('', '', gender),
     age: faker.random.number({ min: 18, max: 80 }),
     gender: genders[gender],
-  })
+  }
 
   return character
 }
 
-interface CharacterStoreInterface extends GameLoopCallable {
-  addCharacter: (CharacterObject) => void
-}
+const CharacterStore = (): GameLoopCallable => {
+  function init() {
+    const characters = []
+    const max = faker.random.number({ min: 100, max: 1000 })
 
-const CharacterStore = (): CharacterStoreInterface => {
-  const characters: CharacterObject[] = []
+    while (characters.length < max) {
+      characters.push(createCharacter())
+    }
 
-  const addCharacter = character => {
-    characters.push(character)
+    return characters
   }
 
-  const max = faker.random.number({ min: 100, max: 50 })
-
-  while (characters.length < max) {
-    addCharacter(createCharacter())
-  }
-
-  function onTick() {
-    characters.forEach(char => char.onTick())
-    const firstChar = characters[0]
-    console.log(`${firstChar.name}, ${firstChar.age} years old.`)
+  function run(state) {
+    if (get(state, 'characters', []).length === 0) {
+      state.characters = init()
+    } else {
+      state.characters = runCharacterActions(state)
+    }
   }
 
   return {
-    addCharacter,
-    onTick,
+    run,
   }
 }
 

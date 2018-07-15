@@ -1,7 +1,7 @@
 import { action, autorun, extendObservable, observable } from 'mobx'
 import { DateTime } from 'luxon'
-import { WorldInterface } from '../../game/World'
 import timer from '../helpers/timer'
+import { WorldInterface } from '../../shared/types/World'
 
 const TICK_INTERVAL = 1000
 
@@ -58,17 +58,14 @@ const GameStore = createWorld => state => {
 
   function runWorld() {
     if (gameState.world) {
-      const timePassed = gameState.world.run(gameState.timeIncrement)
-      setWorldTime(timePassed)
+      const worldState = gameState.world.run(gameState.timeIncrement)
+      setWorldTime(worldState.time)
     }
   }
 
   autorun(() => {
     if (gameState.isRunning && !timerHandle) {
-      timerHandle = timer(
-        () => gameState.world.run(gameState.timeIncrement),
-        TICK_INTERVAL,
-      )
+      timerHandle = timer(runWorld, TICK_INTERVAL)
     }
 
     if (!gameState.isRunning && timerHandle) {

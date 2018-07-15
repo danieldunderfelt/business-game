@@ -1,4 +1,5 @@
 import { GameLoopCallable } from '../../game/types/GameLoopCallable'
+import { GameObjectData } from './GameObjectData'
 
 export enum Gender {
   female,

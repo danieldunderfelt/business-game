@@ -1,36 +1,40 @@
+import { WorldInterface } from '../shared/types/World'
 import CharacterStore from './stores/CharacterStore'
-
-export interface WorldInterface {
-  run: (seconds: number) => number
-  getTime: () => number
-}
+import BusinessStore from './stores/BusinessStore'
+import { forEach, get } from 'lodash'
+import TimeStore from './stores/TimeStore'
+import produce from 'immer'
 
 const World = (): WorldInterface => {
-  let time = 0
-  const characters = CharacterStore()
+  const stores = {
+    time: TimeStore(),
+    characters: CharacterStore(),
+    businesses: BusinessStore(),
+  }
 
-  function run(seconds) {
+  let state = {}
+
+  function run(seconds: number = 1) {
     let eventLoopIteration = 0
+    let nextState = state
 
     for (eventLoopIteration; eventLoopIteration < seconds; eventLoopIteration++) {
-      time++
-      runIteration()
+      nextState = produce(nextState, draftState => {
+        forEach(stores, store => store.run(draftState))
+      })
     }
 
-    return time
+    state = nextState
+    return state
   }
 
-  function runIteration() {
-    characters.onTick()
-  }
-
-  function getTime() {
-    return time
+  function getState() {
+    return state
   }
 
   return {
     run,
-    getTime,
+    getState,
   }
 }
 

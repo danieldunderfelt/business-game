@@ -1,3 +1,4 @@
 export interface GameLoopCallable {
-  onTick: () => void
+  batch?: (state: any) => void
+  run: (state: any) => void
 }

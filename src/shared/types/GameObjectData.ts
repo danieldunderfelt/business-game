@@ -1,3 +1,3 @@
-interface GameObjectData {
+export interface GameObjectData {
   id: string
 }
