@@ -8,7 +8,7 @@ const timer = function(fn, delay) {
     const delta = current - start
 
     if (delta >= delay) {
-      fn.call(current)
+      fn()
       start = new Date().getTime()
     }
 

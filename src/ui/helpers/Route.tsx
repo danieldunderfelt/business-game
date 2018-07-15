@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Router } from 'pathricia'
 import { inject, observer } from 'mobx-react'
-import { AnyFunction } from '../../types/AnyFunction'
+import { AnyFunction } from '../../shared/types/AnyFunction'
 import { observable, action } from 'mobx'
 import { omit } from 'lodash'
 

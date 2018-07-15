@@ -2,13 +2,13 @@ import * as React from 'react'
 import { Provider } from 'mobx-react'
 import { Router } from 'pathricia'
 import createHistory from 'history/createBrowserHistory'
-import App from './views/App'
+import Root from './ui/views/Root'
 import 'normalize.css'
 import { injectGlobal } from 'styled-components'
-import { typography } from './style/typography'
+import { typography } from './ui/style/typography'
 import { createStore } from 'mobx-app'
-import GameStore from './stores/GameStore'
-import loop from './game/loop'
+import GameStore from './ui/stores/GameStore'
+import World from './game/World'
 
 injectGlobal`
   body {
@@ -20,21 +20,22 @@ injectGlobal`
   ${typography}
 `
 
+function createWorld() {
+  return World()
+}
+
 // Create state and actions from store factories
 const { state, actions } = createStore({
-  Game: GameStore,
+  Game: GameStore(createWorld),
 })
 
 // Create pathricia router
 const router = Router('/', createHistory())
 
-const AppContainer = () => (
+const App = () => (
   <Provider state={state} actions={actions} router={router}>
-    <App />
+    <Root />
   </Provider>
 )
 
-// Start the game loop
-loop(state)
-
-export default AppContainer
+export default App

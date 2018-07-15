@@ -14,6 +14,7 @@
     "mobx-utils": "^5.0.0",
     "normalize.css": "^8.0.0",
     "pathricia": "^1.0.1",
+    "prettyjson": "^1.2.1",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "styled-components": "^3.3.3",

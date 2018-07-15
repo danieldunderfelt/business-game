@@ -1,0 +1,3 @@
+interface GameObjectData {
+  id: string
+}
