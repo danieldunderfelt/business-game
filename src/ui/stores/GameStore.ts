@@ -1,21 +1,24 @@
 import { action, autorun, extendObservable, observable } from 'mobx'
 import { DateTime } from 'luxon'
 import timer from '../helpers/timer'
+import { get } from 'lodash'
 import { WorldInterface } from '../../shared/types/World'
 
 const TICK_INTERVAL = 1000
 
-const GameStore = createWorld => state => {
+const GameStore = createWorld => (state, initialState) => {
   let timerHandle = null
+
+  console.log(initialState)
 
   const gameState = extendObservable(
     state,
     {
-      world: null,
-      worldTime: 0,
-      startDate: null,
-      timeIncrement: 1, // how many seconds to increment timePassed per second
-      paused: true,
+      world: get(initialState, 'world', null),
+      worldTime: get(initialState, 'worldTime', 0),
+      startDate: get(initialState, 'startDate', null),
+      timeIncrement: get(initialState, 'timeIncrement', 1), // how many seconds to increment timePassed per second
+      paused: get(initialState, 'paused', true),
       get isRunning() {
         return !!this.world && !!this.startDate && !this.paused
       },

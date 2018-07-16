@@ -1,14 +1,10 @@
 import * as React from 'react'
+import { hot } from 'react-hot-loader'
 import { Provider } from 'mobx-react'
-import { Router } from 'pathricia'
-import createHistory from 'history/createBrowserHistory'
 import Root from './ui/views/Root'
 import 'normalize.css'
 import { injectGlobal } from 'styled-components'
 import { typography } from './ui/style/typography'
-import { createStore } from 'mobx-app'
-import GameStore from './ui/stores/GameStore'
-import World from './game/World'
 
 injectGlobal`
   body {
@@ -20,22 +16,10 @@ injectGlobal`
   ${typography}
 `
 
-function createWorld() {
-  return World()
-}
-
-// Create state and actions from store factories
-const { state, actions } = createStore({
-  Game: GameStore(createWorld),
-})
-
-// Create pathricia router
-const router = Router('/', createHistory())
-
-const App = () => (
+const App = ({ state, actions, router }) => (
   <Provider state={state} actions={actions} router={router}>
     <Root />
   </Provider>
 )
 
-export default App
+export default hot(module)(App)

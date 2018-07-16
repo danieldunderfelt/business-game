@@ -33,6 +33,7 @@ export default inject(app('Game'))(
     <div>
       <GameControls>
         <div>
+          derpderpderpderp
           <h1 style={{ marginTop: 0 }}>Game simulator</h1>
           <h3>
             Game started at{' '}
