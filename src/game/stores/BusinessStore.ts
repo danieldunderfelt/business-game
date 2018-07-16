@@ -19,25 +19,26 @@ function createBusiness(): BusinessData {
 const BusinessStore = (): GameLoopCallable => {
   function init() {
     const businesses = []
-    const max = faker.random.number({ min: 5, max: 50 })
+    const max = 50 // faker.random.number({ min: 5, max: 50 })
 
     while (businesses.length < max) {
       businesses.push(createBusiness())
     }
 
-    return businesses
+    return {
+      businesses,
+    }
   }
 
   function run(state) {
-    if (get(state, 'businesses', []).length === 0) {
-      state.businesses = init()
-    } else {
-      state.businesses = runBusinessActions(state)
+    return {
+      businesses: runBusinessActions(state),
     }
   }
 
   return {
     run,
+    init,
   }
 }
 

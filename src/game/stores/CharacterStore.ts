@@ -3,6 +3,7 @@ import { CharacterData, Gender } from '../../shared/types/Character'
 import { GameLoopCallable } from '../types/GameLoopCallable'
 import { get } from 'lodash'
 import runCharacterActions from '../actions/runCharacterActions'
+import runBusinessActions from '../actions/runBusinessActions'
 
 const genders: Gender[] = [Gender.female, Gender.male]
 
@@ -22,25 +23,26 @@ function createCharacter(): CharacterData {
 const CharacterStore = (): GameLoopCallable => {
   function init() {
     const characters = []
-    const max = faker.random.number({ min: 100, max: 1000 })
+    const max = 1000 // faker.random.number({ min: 100, max: 1000 })
 
     while (characters.length < max) {
       characters.push(createCharacter())
     }
 
-    return characters
+    return {
+      characters,
+    }
   }
 
   function run(state) {
-    if (get(state, 'characters', []).length === 0) {
-      state.characters = init()
-    } else {
-      state.characters = runCharacterActions(state)
+    return {
+      characters: runCharacterActions(state),
     }
   }
 
   return {
     run,
+    init,
   }
 }
 

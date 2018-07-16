@@ -1,5 +1,4 @@
-import { action, autorun, extendObservable, observable } from 'mobx'
-import { DateTime } from 'luxon'
+import { action, extendObservable, observable, reaction } from 'mobx'
 import timer from '../helpers/timer'
 import { get } from 'lodash'
 import { WorldInterface } from '../../shared/types/World'
@@ -13,27 +12,17 @@ const GameStore = createWorld => (state, initialState) => {
     state,
     {
       world: get(initialState, 'world', null),
-      worldState: get(initialState, 'worldState', {}),
-      startDate: get(initialState, 'startDate', null),
+      worldState: get(initialState, 'worldState', null),
       timeIncrement: get(initialState, 'timeIncrement', 1), // how many seconds to increment timePassed per second
       paused: get(initialState, 'paused', true),
       get isRunning() {
-        return !!this.world && !!this.startDate && !this.paused
+        return !!this.world && !this.paused
       },
     },
     {
-      startDate: observable.struct,
       world: observable.struct,
     },
   )
-
-  const setStartDate = action((startDate: DateTime) => {
-    gameState.startDate = startDate
-  })
-
-  const setWorldState = action(worldState => {
-    gameState.worldState = worldState
-  })
 
   const setPaused = action(paused => (gameState.paused = paused))
 
@@ -47,9 +36,12 @@ const GameStore = createWorld => (state, initialState) => {
     gameState.world = world
   })
 
-  function initialize(startDate = DateTime.local()) {
+  const setWorldState = action(worldState => {
+    gameState.worldState = worldState
+  })
+
+  function initialize() {
     if (!gameState.world) {
-      setStartDate(startDate)
       setWorld(createWorld())
     }
   }
@@ -57,25 +49,26 @@ const GameStore = createWorld => (state, initialState) => {
   const pauseLoop = () => setPaused(true)
   const runLoop = () => setPaused(false)
 
-  function runWorld() {
+  const runWorld = action(async () => {
     if (gameState.world) {
-      console.time('world')
-      const worldState = gameState.world.run(gameState.timeIncrement)
+      const worldState = await gameState.world.run(gameState.timeIncrement)
       setWorldState(worldState)
-      console.timeEnd('world')
-    }
-  }
-
-  autorun(() => {
-    if (gameState.isRunning && !timerHandle) {
-      timerHandle = timer(runWorld, TICK_INTERVAL)
-    }
-
-    if (!gameState.isRunning && timerHandle) {
-      cancelAnimationFrame(timerHandle.value)
-      timerHandle = null
     }
   })
+
+  reaction(
+    () => gameState.isRunning,
+    running => {
+      if (running && !timerHandle) {
+        timerHandle = timer(runWorld, TICK_INTERVAL)
+      }
+
+      if (!running && timerHandle) {
+        cancelAnimationFrame(timerHandle.value)
+        timerHandle = null
+      }
+    },
+  )
 
   return {
     initialize,

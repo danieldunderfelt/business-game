@@ -1,4 +1,4 @@
 export interface GameLoopCallable {
-  batch?: (state: any) => void
+  init: (state: any) => void
   run: (state: any) => void
 }

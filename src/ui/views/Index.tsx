@@ -36,14 +36,8 @@ export default inject(app('Game'))(
       <GameControls>
         <div>
           <h1 style={{ marginTop: 0 }}>Game simulator</h1>
-          <h3>
-            Game started at{' '}
-            {!!state.startDate
-              ? state.startDate.toLocaleString(DateTime.DATETIME_SHORT)
-              : '[Not started]'}
-          </h3>
           <p>Game is {state.isRunning ? 'running' : 'paused'}.</p>
-          <p>Game world time: {state.worldState.time}</p>
+          <p>Game world time: {get(state, 'worldState.time', 0)}</p>
         </div>
         <div>
           <p style={{ marginTop: '0.5rem' }}>

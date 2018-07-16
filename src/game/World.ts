@@ -1,25 +1,33 @@
 import { WorldInterface } from '../shared/types/World'
 import CharacterStore from './stores/CharacterStore'
 import BusinessStore from './stores/BusinessStore'
-import { forEach, get } from 'lodash'
 import TimeStore from './stores/TimeStore'
-import produce from 'immer'
+import { merge } from 'lodash'
 
 const World = (): WorldInterface => {
   const stores = [TimeStore(), CharacterStore(), BusinessStore()]
-  let state: any = {}
+  const state: any = {}
 
-  function run(seconds: number = 1) {
+  function getStateFromStores(storeMethod = 'run') {
+    let storeIdx = 0
+    const storeCount = stores.length
+
+    while (storeIdx < storeCount) {
+      merge(state, stores[storeIdx][storeMethod](state))
+      storeIdx++
+    }
+  }
+
+  getStateFromStores('init')
+
+  async function run(seconds: number = 1) {
     let eventLoopIteration = 0
-    let nextState = state
 
-    for (eventLoopIteration; eventLoopIteration < seconds; eventLoopIteration++) {
-      nextState = produce(nextState, draftState => {
-        forEach(stores, store => store.run(draftState))
-      })
+    while (eventLoopIteration < seconds) {
+      getStateFromStores()
+      eventLoopIteration++
     }
 
-    state = nextState
     return state
   }
 
