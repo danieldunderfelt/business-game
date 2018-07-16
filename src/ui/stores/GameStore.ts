@@ -9,13 +9,11 @@ const TICK_INTERVAL = 1000
 const GameStore = createWorld => (state, initialState) => {
   let timerHandle = null
 
-  console.log(initialState)
-
   const gameState = extendObservable(
     state,
     {
       world: get(initialState, 'world', null),
-      worldTime: get(initialState, 'worldTime', 0),
+      worldState: get(initialState, 'worldState', {}),
       startDate: get(initialState, 'startDate', null),
       timeIncrement: get(initialState, 'timeIncrement', 1), // how many seconds to increment timePassed per second
       paused: get(initialState, 'paused', true),
@@ -33,8 +31,8 @@ const GameStore = createWorld => (state, initialState) => {
     gameState.startDate = startDate
   })
 
-  const setWorldTime = action((timeValue: number) => {
-    gameState.worldTime = timeValue
+  const setWorldState = action(worldState => {
+    gameState.worldState = worldState
   })
 
   const setPaused = action(paused => (gameState.paused = paused))
@@ -61,8 +59,10 @@ const GameStore = createWorld => (state, initialState) => {
 
   function runWorld() {
     if (gameState.world) {
+      console.time('world')
       const worldState = gameState.world.run(gameState.timeIncrement)
-      setWorldTime(worldState.time)
+      setWorldState(worldState)
+      console.timeEnd('world')
     }
   }
 

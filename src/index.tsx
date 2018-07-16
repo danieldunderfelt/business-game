@@ -13,10 +13,6 @@ configure({
   enforceActions: true,
 })
 
-function createWorld() {
-  return World()
-}
-
 // Create pathricia router
 const router = Router('/', createHistory())
 const mountNode = document.getElementById('app')
@@ -29,7 +25,7 @@ function initStore(initialState = {}) {
   // Create state and actions from store factories
   const stores = createStore(
     {
-      Game: GameStore(createWorld),
+      Game: GameStore(World),
     },
     initialState,
   )

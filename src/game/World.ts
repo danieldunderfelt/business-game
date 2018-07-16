@@ -6,13 +6,8 @@ import TimeStore from './stores/TimeStore'
 import produce from 'immer'
 
 const World = (): WorldInterface => {
-  const stores = {
-    time: TimeStore(),
-    characters: CharacterStore(),
-    businesses: BusinessStore(),
-  }
-
-  let state = {}
+  const stores = [TimeStore(), CharacterStore(), BusinessStore()]
+  let state: any = {}
 
   function run(seconds: number = 1) {
     let eventLoopIteration = 0
@@ -28,13 +23,8 @@ const World = (): WorldInterface => {
     return state
   }
 
-  function getState() {
-    return state
-  }
-
   return {
     run,
-    getState,
   }
 }
 
